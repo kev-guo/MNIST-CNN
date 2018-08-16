@@ -87,4 +87,4 @@ mod.fit(X_train, Y_train, validation_data = (X_test, Y_test), epochs = 10, batch
 """CODE TO EVALUATE NETWORKd"""
 #eval
 score = mod.evaluate(X_test, Y_test, verbose = 0)
-print("Error: %.2f%%" % (100 - score[1] * 100))
+print("Percent error: %.2f%%" % (100 - score[1] * 100))
