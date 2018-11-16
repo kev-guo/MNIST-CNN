@@ -1,1 +1,1 @@
-see code
+Handwritten digit recognition
