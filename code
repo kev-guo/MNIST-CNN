@@ -1,8 +1,6 @@
-#CNN (sorry for excess notes, just trying to learn and remind myself)
 import numpy as np
 import keras as ker
 
-#importing and loading data
 from keras.datasets import mnist
 import matplotlib.pyplot as plt
 (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
@@ -11,12 +9,11 @@ import matplotlib.pyplot as plt
 seed = 1
 np.random.seed(seed)
 
-#kind of curious what an image looks like
+#prints out sample image from database
 plt.subplot(221)
 plt.imshow(X_train[0], cmap = plt.get_cmap('gray'))
 plt.show()
 
-#getting more functions
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers.convolutional import Conv2D, MaxPooling2D
@@ -47,7 +44,7 @@ num_classes = 10
 def model():
     mod = Sequential()
     #30 feature maps with a size 5x5 (for 1st layer, add input_shape (pixels, width, height))
-    #can switch relu to sigmoid, might be worse
+    #relu works better than softmax for this CNN
     mod.add(Conv2D(30, (5, 5), 
             input_shape = (1, 28, 28), 
             activation = 'relu'))
@@ -58,17 +55,17 @@ def model():
             activation = 'relu'))
     #downsample
     mod.add(MaxPooling2D(pool_size = (2,2)))
-    #mod.add(Dropout(0.2)) <- lowers accuracy
+    #mod.add(Dropout(0.2)) <- reduce overfitting if needed
     #convert to 1D vector by flattening
     mod.add(Flatten())
     
-    #last step!! start with dense layer with 128 hidden units
-    #keras website used softmax last so I'm going to also
+    #dense layers with 128 hidden units
     mod.add(Dense(128, activation = 'relu'))
     mod.add(Dense(128, activation = 'relu'))
+    #last layer has 10 nodes, for results 0-9
     mod.add(Dense(num_classes, activation = "softmax"))
     
-    #compile to configure model for training, ignore the nuances sorry they're just for me
+    #compile to configure model for training
     mod.compile(optimizer = 'adam',
                 loss = 'categorical_crossentropy',
                 metrics = ['accuracy'],
@@ -78,13 +75,11 @@ def model():
                 target_tensors = None)
     return mod
     
-#model is configured to fit 10 epochs, batch size = 200
+#model is configured to fit 10 epochs, batch size = 200 per
 mod = model()
-#fitting
 mod.fit(X_train, Y_train, validation_data = (X_test, Y_test), epochs = 10, batch_size = 200)
 
 
 """CODE TO EVALUATE NETWORKd"""
-#eval
 score = mod.evaluate(X_test, Y_test, verbose = 0)
 print("Percent error: %.2f%%" % (100 - score[1] * 100))
